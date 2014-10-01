@@ -35,7 +35,7 @@ mod.directive 'infiniteScroll', ['$rootScope', '$window', '$timeout', 'THROTTLE_
     pageYOffset = (elem) ->
       elem = elem[0] or elem
 
-      if isNaN(window.pageYOffset) then elem.document.documentElement.scrollTop else elem.ownerDocument.defaultView.pageYOffset
+      elem.ownerDocument.defaultView.pageYOffset
 
     # infinite-scroll specifies a function to call when the window,
     # or some other container specified by infinite-scroll-container,
@@ -102,7 +102,7 @@ mod.directive 'infiniteScroll', ['$rootScope', '$window', '$timeout', 'THROTTLE_
       handler = throttle(handler, THROTTLE_MILLISECONDS)
 
     scope.$on '$destroy', ->
-      container.off 'scroll', handler
+      container.unbind 'scroll', handler
 
     # infinite-scroll-distance specifies how close to the bottom of the page
     # the window is allowed to be before we trigger a new scroll. The value
@@ -151,7 +151,7 @@ mod.directive 'infiniteScroll', ['$rootScope', '$window', '$timeout', 'THROTTLE_
 
       container = if typeof newContainer.last is 'function' && newContainer != windowElement then newContainer.last() else newContainer
       if newContainer?
-        container.on 'scroll', handler
+        container.bind 'scroll', handler
 
     changeContainer windowElement
 

@@ -1,4 +1,4 @@
-/* ng-infinite-scroll - v1.1.2 - 2014-08-08 */
+/* ng-infinite-scroll - v1.1.2 - 2014-10-01 */
 var mod;
 
 mod = angular.module('infinite-scroll', []);
@@ -27,7 +27,7 @@ mod.directive('infiniteScroll', [
         height = function(elem) {
           elem = elem[0] || elem;
           if (isNaN(elem.offsetHeight)) {
-            return height(elem.document.documentElement);
+            return elem.document.documentElement.clientHeight;
           } else {
             return elem.offsetHeight;
           }
@@ -40,11 +40,7 @@ mod.directive('infiniteScroll', [
         };
         pageYOffset = function(elem) {
           elem = elem[0] || elem;
-          if (isNaN(window.pageYOffset)) {
-            return elem.document.documentElement.scrollTop;
-          } else {
-            return elem.ownerDocument.defaultView.pageYOffset;
-          }
+          return elem.ownerDocument.defaultView.pageYOffset;
         };
         handler = function() {
           var containerBottom, containerTopOffset, elementBottom, remaining, shouldScroll;
@@ -110,10 +106,10 @@ mod.directive('infiniteScroll', [
           handler = throttle(handler, THROTTLE_MILLISECONDS);
         }
         scope.$on('$destroy', function() {
-          return container.off('scroll', handler);
+          return container.unbind('scroll', handler);
         });
         handleInfiniteScrollDistance = function(v) {
-          return scrollDistance = parseInt(v, 10) || 0;
+          return scrollDistance = parseFloat(v) || 0;
         };
         scope.$watch('infiniteScrollDistance', handleInfiniteScrollDistance);
         handleInfiniteScrollDistance(scope.infiniteScrollDistance);
@@ -137,7 +133,7 @@ mod.directive('infiniteScroll', [
           }
           container = typeof newContainer.last === 'function' && newContainer !== windowElement ? newContainer.last() : newContainer;
           if (newContainer != null) {
-            return container.on('scroll', handler);
+            return container.bind('scroll', handler);
           }
         };
         changeContainer(windowElement);
